@@ -16,16 +16,20 @@ struct GameView: View {
         ]
     
     var rowHeight = (UIScreen.main.bounds.height * 0.6) / 4
+    var viewModel: GameViewModel = GameViewModel()
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 8) {
-            ForEach(0...15, id: \.self) { _ in
-                CardView().frame(height: rowHeight)
+            ForEach(viewModel.cards) { item in
+                CardView(cardItem: item)
+                    .frame(height: rowHeight)
+                    .onTapGesture {
+                        viewModel.cardSelected(item)
+                    }
             }
         }
         .padding(16)
     }
-
 }
 
 #Preview {
