@@ -23,23 +23,4 @@ class CardItem: Identifiable, Equatable, ObservableObject {
         self.color = color
         self.canFlip = canFlip
     }
-    
-    static let testItems = [
-        CardItem(color: .red),
-        CardItem(color: .blue),
-        CardItem(color: .green),
-        CardItem(color: .black),
-        CardItem(color: .yellow),
-        CardItem(color: .cyan),
-        CardItem(color: .gray),
-        CardItem(color: .purple),
-        CardItem(color: .red),
-        CardItem(color: .blue),
-        CardItem(color: .green),
-        CardItem(color: .black),
-        CardItem(color: .yellow),
-        CardItem(color: .cyan),
-        CardItem(color: .gray),
-        CardItem(color: .purple)
-    ]
 }

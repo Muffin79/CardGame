@@ -54,8 +54,7 @@ struct CardView: View {
         }.onReceive(cardItem.$isFliped
             .dropFirst()
             .removeDuplicates()) { value in
-            print("Value received \(value)")
-            flipAnimation(value)
+                flipAnimation(value)
         }
     }
     
@@ -81,5 +80,5 @@ struct CardView: View {
 }
 
 #Preview {
-    CardView(cardItem: CardItem.testItems[0])
+    CardView(cardItem: CardItem(color: CardColors.red))
 }
