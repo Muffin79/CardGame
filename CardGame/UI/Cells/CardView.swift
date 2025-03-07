@@ -7,16 +7,14 @@
 
 import SwiftUI
 
-fileprivate let cardCornerRadius: CGFloat = 12
-
 struct CardFrontView: View {
     var color: Color?
     
     var body: some View {
         Color(color ?? .red)//.red)
-            .cornerRadius(cardCornerRadius)
+            .cornerRadius(CardConfiguration.cardCornerRadius)
             .overlay(
-                RoundedRectangle(cornerRadius: cardCornerRadius)
+                RoundedRectangle(cornerRadius: CardConfiguration.cardCornerRadius)
                     .inset(by: 2) // inset value should be same as lineWidth in .stroke
                     .stroke(.black, lineWidth: 2)
             )
@@ -28,9 +26,9 @@ struct CardBackView: View {
 
     var body: some View {
         Color(.white)
-            .cornerRadius(cardCornerRadius)
+            .cornerRadius(CardConfiguration.cardCornerRadius)
             .overlay(
-                RoundedRectangle(cornerRadius: cardCornerRadius)
+                RoundedRectangle(cornerRadius: CardConfiguration.cardCornerRadius)
                     .inset(by: 2) // inset value should be same as lineWidth in .stroke
                     .stroke(.black, lineWidth: 2)
             )
@@ -42,7 +40,6 @@ struct CardView: View {
     @State private var frontRotationAngle: Double = -90
     @State private var backRotationAngle: Double = 0
     
-    let flipAnimationDuration = 0.1
     var cardItem: CardItem
     
     var body: some View {
@@ -63,21 +60,20 @@ struct CardView: View {
     }
     
     func flipAnimation(_ isFliped: Bool) {
-//        guard cardItem.canFlip else { return }
         if isFliped {
-            withAnimation(.linear(duration: flipAnimationDuration)) {
+            withAnimation(.linear(duration: CardConfiguration.flipAnimationDuration)) {
                 backRotationAngle = 90
             }
             
-            withAnimation(.linear(duration: flipAnimationDuration).delay(flipAnimationDuration)) {
+            withAnimation(.linear(duration: CardConfiguration.flipAnimationDuration).delay(CardConfiguration.flipAnimationDuration)) {
                 frontRotationAngle = 0
             }
         } else {
-            withAnimation(.linear(duration: flipAnimationDuration)) {
+            withAnimation(.linear(duration: CardConfiguration.flipAnimationDuration)) {
                 frontRotationAngle = -90
             }
             
-            withAnimation(.linear(duration: flipAnimationDuration).delay(flipAnimationDuration)) {
+            withAnimation(.linear(duration: CardConfiguration.flipAnimationDuration).delay(CardConfiguration.flipAnimationDuration)) {
                 backRotationAngle = 0
             }
         }

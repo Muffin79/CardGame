@@ -34,7 +34,7 @@ final class GameViewModel {
             selectedItem = nil
             return
         } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + CardConfiguration.flipAnimationDuration * 2) {
                 item.isFliped.toggle()
                 self.selectedItem?.isFliped.toggle()
                 self.selectedItem = nil
