@@ -15,8 +15,16 @@ struct GameView: View {
             GridItem(.flexible())
         ]
     
-    var rowHeight = (UIScreen.main.bounds.height * 0.6) / 4
-    @Bindable var viewModel: GameViewModel = GameViewModel(configuration: GameConfiguration(itemsCount: 8, timeLimit: 60))
+    var rowHeight: CGFloat
+    @Bindable var viewModel: GameViewModel
+    
+    
+    init(configuration: GameConfiguration) {
+        viewModel = GameViewModel(configuration: configuration)
+        let cardsCount = configuration.itemsCount *  2
+        let rowsCount = CGFloat(cardsCount / 4)
+        rowHeight = (UIScreen.main.bounds.height * 0.6) / rowsCount
+    }
     
     var body: some View {
         VStack {
@@ -45,5 +53,5 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView()
+    GameView(configuration: GameConfiguration(gameDificulty: .easy))
 }
