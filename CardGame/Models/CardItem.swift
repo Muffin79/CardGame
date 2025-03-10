@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-class CardItem: Identifiable, Equatable, ObservableObject {
+class CardItem: Identifiable, Equatable {
     static func == (lhs: CardItem, rhs: CardItem) -> Bool {
         return rhs.color == lhs.color
     }

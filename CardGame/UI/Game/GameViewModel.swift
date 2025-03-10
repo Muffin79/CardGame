@@ -7,24 +7,59 @@
 import Foundation
 import Combine
 
-final class GameViewModel {
+@Observable final class GameViewModel {
     
-    var cancelables = Set<AnyCancellable>()
-    var cards: [CardItem]
+    private var cancelables = Set<AnyCancellable>()
+    
+    var cards: [CardItem] = []
     var selectedItem: CardItem?
+    
+    var timerString: String = ""
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    var secondsTimer = 0
+    private var timeLeft: Int = 0
+    
     private var mistakesCount = 0
     var paused = false
+    var gameOver = false
     
-    init() {
-        var colors = CardColors.getColorsForCards(8)
+    let secondsFormatter = SecondsToStringFormatter()
+    var configuration: GameConfiguration
+    
+    var gameOverMessage: String {
+        if timeLeft == 0 {
+            return "You lose! Try again."
+        }
+        
+        return "Your score: \(calculateScore())"
+    }
+    
+    init(configuration: GameConfiguration) {
+        self.configuration = configuration
+        
+        startGame()
+        startTimer()
+    }
+    
+    func startGame() {
+        timeLeft = configuration.timeLimit
+        timerString = secondsFormatter.secondsToString(configuration.timeLimit)
+        setupCards()
+    }
+    
+    func setupCards() {
+        var colors = CardColors.getColorsForCards(configuration.itemsCount)
+        timeLeft = configuration.timeLimit
         colors.append(contentsOf: colors)
         cards = colors.shuffled().map{ CardItem(color: $0) }
+    }
+    
+    private func startTimer() {
         timer.sink {[weak self] _ in
             guard let self else { return }
-            if !self.paused {
-                self.secondsTimer += 1
+            if !self.paused && !self.gameOver {
+                self.timeLeft -= 1
+                self.timerString = self.secondsFormatter.secondsToString(self.timeLeft)
+                checkGameOver()
             }
         }.store(in: &cancelables)
     }
@@ -62,13 +97,17 @@ final class GameViewModel {
     }
     
     func checkGameOver() {
+        if timeLeft == 0 {
+            gameOver = true
+            return
+        }
+        
         if cards.allSatisfy({ !$0.canFlip }) {
-            print("Game Over!")
-            print("Your score \(calculateScore())")
+            gameOver = true
         }
     }
     
     func calculateScore() -> Int {
-        return 1000 - mistakesCount - secondsTimer
+        return 1000 - (mistakesCount * 3) + timeLeft
     }
 }

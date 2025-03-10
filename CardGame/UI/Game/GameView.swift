@@ -16,19 +16,31 @@ struct GameView: View {
         ]
     
     var rowHeight = (UIScreen.main.bounds.height * 0.6) / 4
-    var viewModel: GameViewModel = GameViewModel()
+    @Bindable var viewModel: GameViewModel = GameViewModel(configuration: GameConfiguration(itemsCount: 8, timeLimit: 60))
     
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 8) {
-            ForEach(viewModel.cards) { item in
-                CardView(cardItem: item)
-                    .frame(height: rowHeight)
-                    .onTapGesture {
-                        viewModel.cardSelected(item)
-                    }
+        VStack {
+            HStack(alignment: .center) {
+                Text(viewModel.timerString)
             }
-        }
-        .padding(16)
+            
+            LazyVGrid(columns: columns, spacing: 8) {
+                ForEach(viewModel.cards) { item in
+                    CardView(cardItem: item)
+                        .frame(height: rowHeight)
+                        .onTapGesture {
+                            viewModel.cardSelected(item)
+                        }
+                }
+            }
+            .padding(16)
+        }.alert("Game Over", isPresented: $viewModel.gameOver, actions: {
+            Button("Retry") {
+                viewModel.startGame()
+            }
+        }, message: {
+            Text(viewModel.gameOverMessage)
+        })
     }
 }
 
