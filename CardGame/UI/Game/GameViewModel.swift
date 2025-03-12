@@ -15,15 +15,31 @@ import Combine
     var selectedItem: CardItem?
     
     var timerString: String = ""
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    var timer: Timer?// = Timer.publish(every: 1, on: .main, in: .common)
     private var timeLeft: Int = 0
     
     private var mistakesCount = 0
-    var paused = false
-    var gameOver = false
+    var paused = false {
+        didSet {
+            if paused {
+                stopTimer()
+            } else {
+                startTimer()
+            }
+        }
+    }
+    
+    var gameOver = false {
+        didSet {
+            if gameOver {
+                stopTimer()
+            }
+        }
+    }
     
     let secondsFormatter = SecondsToStringFormatter()
     var configuration: GameConfiguration
+    private var defaultsStorage: DefaultsStorage
     
     var gameOverMessage: String {
         if timeLeft == 0 {
@@ -33,14 +49,14 @@ import Combine
         return "Your score: \(calculateScore())"
     }
     
-    init(configuration: GameConfiguration) {
+    init(configuration: GameConfiguration, defaultsStorage: DefaultsStorage = DefaultsStorage.shared) {
         self.configuration = configuration
+        self.defaultsStorage = defaultsStorage
         
-        startGame()
-        startTimer()
+       // setupGame()
     }
     
-    func startGame() {
+    func setupGame() {
         timeLeft = configuration.timeLimit
         timerString = secondsFormatter.secondsToString(configuration.timeLimit)
         setupCards()
@@ -53,15 +69,18 @@ import Combine
         cards = colors.shuffled().map{ CardItem(color: $0) }
     }
     
-    private func startTimer() {
-        timer.sink {[weak self] _ in
+    func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: {[weak self] _ in
             guard let self else { return }
-            if !self.paused && !self.gameOver {
-                self.timeLeft -= 1
-                self.timerString = self.secondsFormatter.secondsToString(self.timeLeft)
-                checkGameOver()
-            }
-        }.store(in: &cancelables)
+            
+            timeLeft -= 1
+            timerString = secondsFormatter.secondsToString(self.timeLeft)
+            checkGameOver()
+        })
+    }
+    
+    func stopTimer() {
+        timer?.invalidate()
     }
     
     func cardSelected(_ item: CardItem) {
@@ -104,6 +123,15 @@ import Combine
         
         if cards.allSatisfy({ !$0.canFlip }) {
             gameOver = true
+            saveRecordIfNeeded()
+        }
+    }
+    
+    func saveRecordIfNeeded() {
+        let score = calculateScore()
+        let record = defaultsStorage.getRecord()
+        if score > record {
+            defaultsStorage.saveRecord(score)
         }
     }
     

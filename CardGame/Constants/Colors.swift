@@ -17,8 +17,14 @@ struct CardColors {
     static let yellow = Color(red: 255/255, green: 255/255, blue: 51/255)
     static let green = Color(red: 20/255, green: 242/255, blue: 28/255)
     static let black = Color(red: 0/255, green: 0/255, blue: 0/255)
+    static let brown = Color(red: 102/255, green: 51/255, blue: 0/255)
+    static let orange = Color(red: 255/255, green: 128/255, blue: 0/255)
+    static let lightGrey = Color(red: 192/255, green: 192/255, blue: 192/255)
+    static let darkGreen = Color(red: 51/255, green: 102/255, blue: 0/255)
     
-    static let availableColors = Set<Color>([red, darkBlue, purple, lightBlue, pink, yellow, green, black])
+    static let availableColors = Set<Color>([red, darkBlue, purple, lightBlue,
+                                             pink, yellow, green, black,
+                                             brown, orange, lightGrey, darkGreen])
     
     static func getColorsForCards(_ count: Int) -> [Color] {
         guard count <= availableColors.count else { return [] }

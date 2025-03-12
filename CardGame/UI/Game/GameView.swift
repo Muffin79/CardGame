@@ -24,6 +24,7 @@ struct GameView: View {
         let cardsCount = configuration.itemsCount *  2
         let rowsCount = CGFloat(cardsCount / 4)
         rowHeight = (UIScreen.main.bounds.height * 0.6) / rowsCount
+        print("View inited")
     }
     
     var body: some View {
@@ -42,9 +43,15 @@ struct GameView: View {
                 }
             }
             .padding(16)
-        }.alert("Game Over", isPresented: $viewModel.gameOver, actions: {
+        }.onAppear(perform: {
+            viewModel.setupGame()
+            viewModel.startTimer()
+        }).onDisappear(perform: {
+            viewModel.stopTimer()
+        }).alert("Game Over", isPresented: $viewModel.gameOver, actions: {
             Button("Retry") {
-                viewModel.startGame()
+                viewModel.setupGame()
+                viewModel.startTimer()
             }
         }, message: {
             Text(viewModel.gameOverMessage)
