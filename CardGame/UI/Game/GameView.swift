@@ -17,14 +17,14 @@ struct GameView: View {
     
     var rowHeight: CGFloat
     @Bindable var viewModel: GameViewModel
-    
+    @Environment(\.scenePhase) var phase
+    @Environment(\.dismiss) var dismiss
     
     init(configuration: GameConfiguration) {
         viewModel = GameViewModel(configuration: configuration)
         let cardsCount = configuration.itemsCount *  2
         let rowsCount = CGFloat(cardsCount / 4)
         rowHeight = (UIScreen.main.bounds.height * 0.6) / rowsCount
-        print("View inited")
     }
     
     var body: some View {
@@ -49,13 +49,26 @@ struct GameView: View {
         }).onDisappear(perform: {
             viewModel.stopTimer()
         }).alert("Game Over", isPresented: $viewModel.gameOver, actions: {
+            Button("Quit", role: .destructive) {
+                dismiss()
+            }
+            
             Button("Retry") {
                 viewModel.setupGame()
                 viewModel.startTimer()
             }
         }, message: {
             Text(viewModel.gameOverMessage)
-        })
+        }).onChange(of: phase) { oldValue, newValue in
+            switch newValue  {
+            case .background:
+                viewModel.stopTimer()
+            case .active:
+                viewModel.startTimer()
+            default:
+                break
+            }
+        }
     }
 }
 

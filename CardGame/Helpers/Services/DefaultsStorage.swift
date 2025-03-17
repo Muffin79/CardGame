@@ -11,7 +11,8 @@ final class DefaultsStorage {
     static var shared = DefaultsStorage()
     //MARK: Identifiers
     private let difficultyLevelKey = "difficultyLevel"
-    private let recordKey = "record"
+    private let recordListKey = "recordList"
+    private let recordsListMaxSize = 10
     
     private var userDefaults = UserDefaults.standard
     
@@ -25,12 +26,23 @@ final class DefaultsStorage {
         return GameDificulty(rawValue: savedLevel) ?? .medium
     }
     
-    func saveRecord(_ record: Int) {
-        userDefaults.set(record, forKey: recordKey)
+    func saveRecordIfNeeded(_ record: Int) {
+        var records = getRecords().sorted()
+        if records.count < recordsListMaxSize {
+            records.append(record)
+            userDefaults.set(records, forKey: recordListKey)
+            return
+        }
+        
+        if (getRecords().min() ?? 0) < record {
+            records[records.count - 1] = record
+        }
+        
+        userDefaults.set(records, forKey: recordListKey)
     }
     
-    func getRecord() -> Int {
-        return userDefaults.integer(forKey: recordKey)
+    func getRecords() -> [Int] {
+        return userDefaults.array(forKey: recordListKey) as? [Int] ?? []
     }
     
 }

@@ -15,7 +15,7 @@ struct StartGameView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
+            VStack(spacing: 16) { 
  
                 Button("Start Game") {
                     showGameScreen.toggle()

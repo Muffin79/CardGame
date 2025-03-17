@@ -123,15 +123,7 @@ import Combine
         
         if cards.allSatisfy({ !$0.canFlip }) {
             gameOver = true
-            saveRecordIfNeeded()
-        }
-    }
-    
-    func saveRecordIfNeeded() {
-        let score = calculateScore()
-        let record = defaultsStorage.getRecord()
-        if score > record {
-            defaultsStorage.saveRecord(score)
+            defaultsStorage.saveRecordIfNeeded(calculateScore())
         }
     }
     
