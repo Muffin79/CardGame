@@ -9,15 +9,28 @@ import SwiftUI
 
 struct CardFrontView: View {
     var color: Color?
+    var iconName: String?
     
     var body: some View {
-        Color(color ?? .red)//.red)
-            .cornerRadius(CardConfiguration.cardCornerRadius)
-            .overlay(
-                RoundedRectangle(cornerRadius: CardConfiguration.cardCornerRadius)
-                    .inset(by: 2) // inset value should be same as lineWidth in .stroke
-                    .stroke(.black, lineWidth: 2)
-            )
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.white)
+                .shadow(color: .gray, radius: 2, x: 0, y: 0)
+            Color(color ?? .white)
+                .cornerRadius(CardConfiguration.cardCornerRadius)
+                .overlay(
+                    RoundedRectangle(cornerRadius: CardConfiguration.cardCornerRadius)
+                        .inset(by: 2) // inset value should be same as lineWidth in .stroke
+                        .stroke(.black, lineWidth: 2)
+                )
+            if let iconName = iconName {
+                Image(systemName: iconName)
+                    .resizable()
+                    .frame(width: 40, height: 40)
+                    .foregroundColor(.blue)
+            }
+            
+        }
     }
     
 }
@@ -44,7 +57,7 @@ struct CardView: View {
     
     var body: some View {
         ZStack {
-            CardFrontView(color: cardItem.color)
+            CardFrontView(color: cardItem.color, iconName: cardItem.iconName)
                 .rotation3DEffect(.degrees(frontRotationAngle),
                                   axis: (x: 0, y: 1, z: 0))
            
@@ -80,5 +93,5 @@ struct CardView: View {
 }
 
 #Preview {
-    CardView(cardItem: CardItem(color: CardColors.red))
+    CardView(cardItem: CardItem(type: .icon("suit.diamond.fill")))
 }

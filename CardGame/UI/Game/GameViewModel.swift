@@ -18,6 +18,9 @@ import Combine
     var timer: Timer?// = Timer.publish(every: 1, on: .main, in: .common)
     private var timeLeft: Int = 0
     
+    //MARK: For Tests
+    private var isUseIcons = true
+    
     private var mistakesCount = 0
     var paused = false {
         didSet {
@@ -63,10 +66,19 @@ import Combine
     }
     
     func setupCards() {
-        var colors = CardColors.getColorsForCards(configuration.itemsCount)
+        if !isUseIcons {
+            var colors = CardColors.getColorsForCards(configuration.itemsCount)
+    
+            colors.append(contentsOf: colors)
+            cards = colors.shuffled().map{ CardItem(type: .color($0)) }
+        } else {
+            var icons = CardIcons.getIconsForCards(configuration.itemsCount)
+    
+            icons.append(contentsOf: icons)
+            cards = icons.shuffled().map{ CardItem(type: .icon($0)) }
+        }
+        
         timeLeft = configuration.timeLimit
-        colors.append(contentsOf: colors)
-        cards = colors.shuffled().map{ CardItem(color: $0) }
     }
     
     func startTimer() {
@@ -99,7 +111,7 @@ import Combine
         
        
         
-        if selectedItem?.color == item.color {
+        if selectedItem == item {
             selectedItem?.canFlip = false
             item.canFlip = false
             selectedItem = nil
