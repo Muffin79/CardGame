@@ -12,6 +12,8 @@ final class DefaultsStorage {
     //MARK: Identifiers
     private let difficultyLevelKey = "difficultyLevel"
     private let recordListKey = "recordList"
+    private let gameTypeKey = "gameType"
+    
     private let recordsListMaxSize = 10
     
     private var userDefaults = UserDefaults.standard
@@ -45,4 +47,12 @@ final class DefaultsStorage {
         return userDefaults.array(forKey: recordListKey) as? [Int] ?? []
     }
     
+    func saveGameType(_ type: GameType) {
+        userDefaults.set(type.rawValue, forKey: gameTypeKey)
+    }
+    
+    func getGameType() -> GameType {
+        let savedType = userDefaults.string(forKey: gameTypeKey) ?? ""
+        return GameType(rawValue: savedType) ?? .colors
+    }
 }

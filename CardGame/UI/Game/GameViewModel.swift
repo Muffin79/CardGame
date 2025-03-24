@@ -41,7 +41,7 @@ import Combine
     }
     
     let secondsFormatter = SecondsToStringFormatter()
-    var configuration: GameConfiguration
+    var configuration = GameConfiguration(gameDificulty: .medium)
     private var defaultsStorage: DefaultsStorage
     
     var gameOverMessage: String {
@@ -52,20 +52,19 @@ import Combine
         return "Your score: \(calculateScore())"
     }
     
-    init(configuration: GameConfiguration, defaultsStorage: DefaultsStorage = DefaultsStorage.shared) {
-        self.configuration = configuration
+    init(defaultsStorage: DefaultsStorage = DefaultsStorage.shared) {
         self.defaultsStorage = defaultsStorage
-        
-       // setupGame()
     }
     
     func setupGame() {
+        configuration = GameConfiguration(gameDificulty: defaultsStorage.getDifficultyLevel())
         timeLeft = configuration.timeLimit
         timerString = secondsFormatter.secondsToString(configuration.timeLimit)
         setupCards()
     }
     
     func setupCards() {
+        isUseIcons = defaultsStorage.getGameType() == .icons
         if !isUseIcons {
             var colors = CardColors.getColorsForCards(configuration.itemsCount)
     

@@ -9,9 +9,10 @@ import SwiftUI
 
 struct StartGameView: View {
     
+    var storage = DefaultsStorage.shared
     @State var showGameScreen: Bool = false
-    @State var showDifficultySelection: Bool = false
-    @State var selectedDifficulty = DefaultsStorage.shared.getDifficultyLevel()
+    @State var showSettingsScreen: Bool = false
+    @State var selectedDifficulty: GameDificulty = .medium//storage.getDifficultyLevel()
     
     var body: some View {
         NavigationStack {
@@ -19,23 +20,27 @@ struct StartGameView: View {
  
                 Button("Start Game") {
                     showGameScreen.toggle()
-                }.navigationDestination(isPresented: $showGameScreen) {
-                    GameView(configuration: GameConfiguration(gameDificulty: selectedDifficulty))
                 }
                 
-                Button("Select Difficulty") {
-                    showDifficultySelection.toggle()
+                Button("Settings") {
+                    showSettingsScreen.toggle()
                 }
+            }.navigationDestination(isPresented: $showGameScreen) {
+                GameView()
+            }.navigationDestination(isPresented: $showSettingsScreen) {
+                SettingsView(viewModel: SettingsViewModel())
             }
            
-            .alert("Select Difficulty", isPresented: $showDifficultySelection) {
-                ForEach(GameDificulty.allCases) { value in
-                    Button(value.rawValue.capitalized) {
-                        selectedDifficulty = value
-                        DefaultsStorage.shared.saveDifficultyLevel(value)
-                    }.keyboardShortcut(selectedDifficulty == value ? .defaultAction : nil)
-                }
-            }
+//            .alert("Select Difficulty", isPresented: $showDifficultySelection) {
+//                ForEach(GameDificulty.allCases) { value in
+//                    Button(value.rawValue.capitalized) {
+//                        selectedDifficulty = value
+//                        storage.saveDifficultyLevel(value)
+//                    }.keyboardShortcut(selectedDifficulty == value ? .defaultAction : nil)
+//                }
+//            }
+        }.onAppear {
+            selectedDifficulty = storage.getDifficultyLevel()
         }
     }
 }

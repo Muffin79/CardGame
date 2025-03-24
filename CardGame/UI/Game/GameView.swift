@@ -15,17 +15,9 @@ struct GameView: View {
             GridItem(.flexible())
         ]
     
-    var rowHeight: CGFloat
-    @Bindable var viewModel: GameViewModel
+    @Bindable var viewModel: GameViewModel = GameViewModel()
     @Environment(\.scenePhase) var phase
     @Environment(\.dismiss) var dismiss
-    
-    init(configuration: GameConfiguration) {
-        viewModel = GameViewModel(configuration: configuration)
-        let cardsCount = configuration.itemsCount *  2
-        let rowsCount = CGFloat(cardsCount / 4)
-        rowHeight = (UIScreen.main.bounds.height * 0.6) / rowsCount
-    }
     
     var body: some View {
         VStack {
@@ -36,7 +28,7 @@ struct GameView: View {
             LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(viewModel.cards) { item in
                     CardView(cardItem: item)
-                        .frame(height: rowHeight)
+                        .frame(height: calculateRowHeigh(viewModel.configuration.itemsCount))
                         .onTapGesture {
                             viewModel.cardSelected(item)
                         }
@@ -70,8 +62,14 @@ struct GameView: View {
             }
         }
     }
+    
+    func calculateRowHeigh(_ itemsCount: Int) -> CGFloat {
+        let cardsCount = itemsCount *  2
+        let rowsCount = CGFloat(cardsCount / 4)
+        return (UIScreen.main.bounds.height * 0.6) / rowsCount
+    }
 }
 
 #Preview {
-    GameView(configuration: GameConfiguration(gameDificulty: .easy))
+    GameView()
 }
